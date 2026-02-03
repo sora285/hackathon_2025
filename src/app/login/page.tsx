@@ -23,5 +23,5 @@ export default function LoginPage() {
         })();
     }, [router]);
 
-    return <main style={{ padding: 16 }}>{msg}</main>;
+    return <main style={{padding: 16}}>{msg}</main>;
 }
