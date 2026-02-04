@@ -11,167 +11,174 @@ import { fetchEvents } from "@/lib/api";
 const styles: Record<string, CSSProperties> = {
   page: {
     minHeight: "100vh",
-    background: "linear-gradient(180deg, #f8fafc 0%, #ffffff 60%)",
-    color: "#0f172a",
+    background: "#ffffff",
+    color: "#0b1220",
   },
   container: {
-    maxWidth: 980,
+    maxWidth: 920,
     margin: "0 auto",
-    padding: "24px 16px 48px",
+    padding: "24px 16px 64px",
     fontFamily:
-        "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji",
+      "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji",
+    fontSize: 18,
+    lineHeight: 1.6,
   },
   headerRow: {
     display: "flex",
-    alignItems: "flex-end",
+    flexWrap: "wrap",
+    alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
     marginBottom: 18,
   },
   title: {
     margin: 0,
-    fontSize: 28,
+    fontSize: 34,
     lineHeight: 1.2,
-    letterSpacing: "-0.02em",
+    letterSpacing: "-0.01em",
   },
   subtitle: {
-    margin: "6px 0 0",
-    fontSize: 13,
-    color: "#64748b",
+    margin: "8px 0 0",
+    fontSize: 18,
+    color: "#334155",
   },
   searchBar: {
-    display: "flex",
-    gap: 10,
+    display: "grid",
+    gap: 12,
     alignItems: "center",
-    padding: 12,
-    border: "1px solid #e2e8f0",
-    borderRadius: 14,
-    background: "rgba(255,255,255,0.9)",
-    boxShadow: "0 1px 2px rgba(15, 23, 42, 0.06)",
-    marginBottom: 14,
+    padding: 16,
+    border: "2px solid #cbd5e1",
+    borderRadius: 16,
+    background: "#f8fafc",
+    marginBottom: 16,
   },
   input: {
-    flex: 1,
-    padding: "10px 12px",
-    borderRadius: 12,
-    border: "1px solid #e2e8f0",
+    width: "100%",
+    padding: "14px 14px",
+    borderRadius: 14,
+    border: "2px solid #94a3b8",
     outline: "none",
-    background: "#fff",
-    fontSize: 14,
+    background: "#ffffff",
+    fontSize: 20,
+    lineHeight: 1.4,
   },
   button: {
-    padding: "10px 14px",
-    borderRadius: 12,
-    border: "1px solid #0f172a",
-    background: "#0f172a",
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: 700,
+    padding: "14px 16px",
+    borderRadius: 14,
+    border: "2px solid #0b1220",
+    background: "#0b1220",
+    color: "#ffffff",
+    fontSize: 20,
+    fontWeight: 800,
     cursor: "pointer",
-    whiteSpace: "nowrap",
+    minHeight: 56,
   },
   buttonSecondary: {
-    padding: "10px 14px",
-    borderRadius: 12,
-    border: "1px solid #cbd5e1",
-    background: "#fff",
-    color: "#0f172a",
-    fontSize: 14,
-    fontWeight: 700,
+    padding: "14px 16px",
+    borderRadius: 14,
+    border: "2px solid #0b1220",
+    background: "#ffffff",
+    color: "#0b1220",
+    fontSize: 18,
+    fontWeight: 800,
     cursor: "pointer",
-    whiteSpace: "nowrap",
+    minHeight: 56,
   },
   message: {
-    padding: "10px 12px",
-    borderRadius: 12,
-    border: "1px solid #e2e8f0",
-    background: "#fff",
-    color: "#334155",
-    marginBottom: 14,
+    padding: "14px 16px",
+    borderRadius: 14,
+    border: "2px solid #cbd5e1",
+    background: "#ffffff",
+    color: "#0b1220",
+    marginBottom: 16,
+    fontSize: 18,
   },
   list: {
     listStyle: "none",
     padding: 0,
     margin: 0,
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-    gap: 14,
+    gridTemplateColumns: "1fr",
+    gap: 16,
   },
   card: {
-    border: "1px solid #e2e8f0",
-    borderRadius: 16,
-    padding: 14,
-    background: "rgba(255,255,255,0.95)",
-    boxShadow: "0 6px 18px rgba(15, 23, 42, 0.06)",
+    border: "2px solid #cbd5e1",
+    borderRadius: 18,
+    padding: 18,
+    background: "#ffffff",
+    boxShadow: "0 1px 0 rgba(15, 23, 42, 0.06)",
     display: "flex",
     flexDirection: "column",
-    gap: 10,
+    gap: 12,
   },
   cardTop: {
     display: "flex",
-    alignItems: "flex-start",
+    flexWrap: "wrap",
+    alignItems: "center",
     justifyContent: "space-between",
     gap: 10,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: 800,
+    fontSize: 22,
+    fontWeight: 900,
     margin: 0,
     lineHeight: 1.35,
-    letterSpacing: "-0.01em",
   },
   badge: {
     display: "inline-flex",
     alignItems: "center",
-    gap: 6,
-    padding: "6px 10px",
+    justifyContent: "center",
+    padding: "8px 12px",
     borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 700,
-    border: "1px solid #e2e8f0",
-    background: "#f8fafc",
-    color: "#334155",
+    fontSize: 16,
+    fontWeight: 900,
+    border: "2px solid #0b1220",
+    background: "#ffffff",
+    color: "#0b1220",
     whiteSpace: "nowrap",
   },
   meta: {
     display: "grid",
-    gap: 6,
-    color: "#334155",
-    fontSize: 13,
+    gap: 8,
+    color: "#0b1220",
+    fontSize: 18,
   },
   metaRow: {
     display: "flex",
+    flexWrap: "wrap",
     justifyContent: "space-between",
     gap: 10,
-    color: "#475569",
-    fontSize: 12,
+    color: "#0b1220",
+    fontSize: 18,
   },
   ctaRow: {
     display: "flex",
-    gap: 10,
-    marginTop: 4,
+    gap: 12,
+    marginTop: 6,
   },
   cta: {
     flex: 1,
-    padding: "10px 12px",
-    borderRadius: 12,
-    border: "1px solid #0f172a",
-    background: "#0f172a",
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: 800,
+    padding: "16px 16px",
+    borderRadius: 16,
+    border: "2px solid #0b1220",
+    background: "#0b1220",
+    color: "#ffffff",
+    fontSize: 22,
+    fontWeight: 900,
     cursor: "pointer",
+    minHeight: 60,
   },
   ctaDisabled: {
     flex: 1,
-    padding: "10px 12px",
-    borderRadius: 12,
-    border: "1px solid #e2e8f0",
+    padding: "16px 16px",
+    borderRadius: 16,
+    border: "2px solid #94a3b8",
     background: "#e2e8f0",
-    color: "#64748b",
-    fontSize: 14,
-    fontWeight: 800,
+    color: "#334155",
+    fontSize: 22,
+    fontWeight: 900,
     cursor: "not-allowed",
+    minHeight: 60,
   },
 };
 
@@ -235,7 +242,7 @@ export default function HomePage() {
           <div style={styles.headerRow}>
             <div>
               <h1 style={styles.title}>イベント一覧</h1>
-              <p style={styles.subtitle}>エリアで検索して、参加したいイベントを見つけよう</p>
+              <p style={styles.subtitle}>地域名を入力して「検索」を押してください（例：横浜市）</p>
             </div>
             <button
                 type="button"
@@ -250,7 +257,12 @@ export default function HomePage() {
           </div>
 
           <div style={styles.searchBar}>
+            <label htmlFor="area" style={{ fontSize: 18, fontWeight: 800 }}>
+              地域名
+            </label>
             <input
+                id="area"
+                inputMode="search"
                 value={area}
                 onChange={(e) => setArea(e.target.value)}
                 placeholder="例: 横浜市"
@@ -289,14 +301,14 @@ export default function HomePage() {
                     <div style={styles.meta}>
                       <div>{ev.place}</div>
                       <div>
-                        {ev.startAt} <span style={{ color: "#94a3b8" }}>〜</span> {ev.endAt}
+                        {ev.startAt} 〜 {ev.endAt}
                       </div>
                     </div>
 
                     <div style={styles.metaRow}>
                       <span>定員</span>
                       <span>
-                    {ev.capacity} <span style={{ color: "#94a3b8" }}>/</span> 状態: {ev.status}
+                    {ev.capacity} / 状態: {ev.status}
                   </span>
                     </div>
 
