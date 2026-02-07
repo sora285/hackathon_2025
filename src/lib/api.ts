@@ -1,5 +1,5 @@
 // lib/api.ts
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
 export async function fetchEvents(area: string) {
     if (!API_BASE) throw new Error("NEXT_PUBLIC_API_BASE is not set");
@@ -22,8 +22,6 @@ export async function postReservation(eventId: string, userId: string) {
     return { ok: false, code: res.status as number, text: await res.text() };
 }
 
-// lib/api.ts に追加（例）
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
 export async function fetchEvent(eventId: string) {
     const res = await fetch(`${API_BASE}/events/${encodeURIComponent(eventId)}`, {
