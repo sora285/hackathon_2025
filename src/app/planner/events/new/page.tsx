@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import liff from "@line/liff";
 
 type FormState = {
     title: string;
@@ -16,9 +17,9 @@ type FormState = {
 
 const DEFAULT_AREA = process.env.NEXT_PUBLIC_DEFAULT_AREA ?? "横浜市";
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID ?? "";
 
 function toIsoFromDatetimeLocal(v: string) {
-    // datetime-local はローカル時刻。ISOに変換して保存（JST運用ならこれでOK）
     const d = new Date(v);
     if (Number.isNaN(d.getTime())) return null;
     return d.toISOString();
@@ -26,6 +27,10 @@ function toIsoFromDatetimeLocal(v: string) {
 
 export default function NewEventPage() {
     const router = useRouter();
+
+    // ★ 追加：ログイン済みユーザー情報
+    const [liffReady, setLiffReady] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
 
     const [form, setForm] = useState<FormState>({
         title: "",
@@ -41,6 +46,39 @@ export default function NewEventPage() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [ok, setOk] = useState<string | null>(null);
+
+    // ★ 追加：LIFFログイン（未ログインならログインへ飛ばす）
+    useEffect(() => {
+        (async () => {
+            try {
+                if (!LIFF_ID) {
+                    setError("NEXT_PUBLIC_LIFF_ID が未設定です。");
+                    return;
+                }
+                await liff.init({ liffId: LIFF_ID });
+
+                if (!liff.isLoggedIn()) {
+                    liff.login({ redirectUri: window.location.href });
+                    return;
+                }
+
+                const decoded = liff.getDecodedIDToken();
+                if (!decoded?.sub) {
+                    setError("ユーザーIDが取得できませんでした。");
+                    return;
+                }
+
+                setUserId(decoded.sub);
+                setLiffReady(true);
+            } catch (e: unknown) {
+                if (e instanceof Error) {
+                    setError(e.message || "LIFF初期化に失敗しました。");
+                } else {
+                    setError("LIFF初期化に失敗しました。");
+                }
+            }
+        })();
+    }, []);
 
     const validation = useMemo(() => {
         const issues: string[] = [];
@@ -67,6 +105,12 @@ export default function NewEventPage() {
         setError(null);
         setOk(null);
 
+        // ★ 追加：ログイン済みでないと作成できない
+        if (!liffReady || !userId) {
+            setError("ログイン状態を確認できません。もう一度開き直してください。");
+            return;
+        }
+
         if (!validation.ok) {
             setError(validation.issues[0] ?? "入力を確認してください。");
             return;
@@ -87,6 +131,9 @@ export default function NewEventPage() {
                 capacity: validation.cap,
                 description: form.description.trim(),
                 status: form.status,
+
+                // ★ 追加：誰が企画したか（権限制御はしないが、記録は残せる）
+                createdBy: userId,
             };
 
             const res = await fetch(`${API_BASE}/events`, {
@@ -97,13 +144,14 @@ export default function NewEventPage() {
 
             if (!res.ok) {
                 const text = await res.text();
-                setError(text || ("HTTP " + String(res.status)));
-                return;
+                throw new Error(text || `HTTP ${res.status}`);
             }
 
             setOk("イベントを作成しました。");
-            // すぐ一覧へ戻すなら router.push("/admin/events")
-            // ここは一旦成功表示だけ
+
+            // ★ おすすめ：一覧へ戻す（企画一覧ページ）
+            // router.push("/planner/events");
+
         } catch (e: unknown) {
             if (e instanceof Error) {
                 setError(e.message || "作成に失敗しました。");
@@ -113,6 +161,11 @@ export default function NewEventPage() {
         } finally {
             setSubmitting(false);
         }
+    }
+
+    // ★ 追加：LIFF初期化が終わるまで表示を止める（参加側と同じ体験に近い）
+    if (!liffReady && !error) {
+        return <div style={{ maxWidth: 720, margin: "0 auto", padding: 16 }}>読み込み中...</div>;
     }
 
     return (
