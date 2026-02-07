@@ -17,7 +17,7 @@ export function useLiffGuard() {
         (async () => {
             try {
                 if (!LIFF_ID) {
-                    setState({ status: "denied", reason: "NEXT_PUBLIC_LIFF_ID が未設定です" });
+                    setState({ status: "denied", reason: "NEXT_PUBLIC_LIFF_ID_PLANNER が未設定です" });
                     return;
                 }
                 await liff.init({ liffId: LIFF_ID });
