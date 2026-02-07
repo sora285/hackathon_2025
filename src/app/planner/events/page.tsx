@@ -16,7 +16,7 @@ type EventItem = {
     createdBy?: string;
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 // noinspection HtmlUnknownTarget
 const NEW_EVENT_HREF = "/planner/events/new";
@@ -40,7 +40,7 @@ export default function PlannerEventsPage() {
         }
 
         if (!API_BASE) {
-            setError("NEXT_PUBLIC_API_BASE_URL が未設定です");
+            setError("NEXT_PUBLIC_API_BASE が未設定です");
             setLoading(false);
             return;
         }
