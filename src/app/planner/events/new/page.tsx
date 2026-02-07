@@ -170,7 +170,7 @@ export default function NewEventPage() {
     }
 
     return (
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: 16 }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: 16, paddingBottom: 24 }}>
             <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>イベントを企画する</h1>
 
             {error && (
@@ -186,122 +186,127 @@ export default function NewEventPage() {
                 </div>
             )}
 
-            <div style={{ display: "grid", gap: 12 }}>
-                <label>
-                    タイトル（必須）
-                    <input
-                        value={form.title}
-                        onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                        style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6 }}
-                        placeholder="例：地域防災アプリ勉強会"
-                    />
-                </label>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div style={{ padding: 14, border: "1px solid #eee", borderRadius: 14, background: "#fff" }}>
+                <div style={{ display: "grid", gap: 12 }}>
                     <label>
-                        エリア（必須）
+                        タイトル（必須）
                         <input
-                            value={form.area}
-                            onChange={(e) => setForm((p) => ({ ...p, area: e.target.value }))}
-                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6 }}
-                            placeholder="例：横浜市"
+                            value={form.title}
+                            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, fontSize: 16, lineHeight: "24px" }}
+                            placeholder="例：地域防災アプリ勉強会"
                         />
                     </label>
 
-                    <label>
-                        定員（必須）
-                        <input
-                            value={form.capacity}
-                            onChange={(e) => setForm((p) => ({ ...p, capacity: e.target.value }))}
-                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6 }}
-                            inputMode="numeric"
-                            placeholder="30"
-                        />
-                    </label>
-                </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                        <label style={{ flex: "1 1 260px" }}>
+                            エリア（必須）
+                            <input
+                                value={form.area}
+                                onChange={(e) => setForm((p) => ({ ...p, area: e.target.value }))}
+                                style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, fontSize: 16, lineHeight: "24px" }}
+                                placeholder="例：横浜市"
+                            />
+                        </label>
 
-                <label>
-                    場所（必須）
-                    <input
-                        value={form.place}
-                        onChange={(e) => setForm((p) => ({ ...p, place: e.target.value }))}
-                        style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6 }}
-                        placeholder="例：情報科学専門学校 7Fホール"
-                    />
-                </label>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <label>
-                        開始日時（必須）
-                        <input
-                            type="datetime-local"
-                            value={form.startAt}
-                            onChange={(e) => setForm((p) => ({ ...p, startAt: e.target.value }))}
-                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6 }}
-                        />
-                    </label>
-
-                    <label>
-                        終了日時（必須）
-                        <input
-                            type="datetime-local"
-                            value={form.endAt}
-                            onChange={(e) => setForm((p) => ({ ...p, endAt: e.target.value }))}
-                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6 }}
-                        />
-                    </label>
-                </div>
-
-                <label>
-                    詳細（任意）
-                    <textarea
-                        value={form.description}
-                        onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-                        style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, minHeight: 120 }}
-                        placeholder="持ち物、参加条件、タイムテーブルなど"
-                    />
-                </label>
-
-                <label>
-                    公開状態
-                    <select
-                        value={form.status}
-                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as FormState["status"] }))}
-                        style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6 }}
-                    >
-                        <option value="DRAFT">下書き</option>
-                        <option value="PUBLISHED">公開</option>
-                    </select>
-                </label>
-
-                <div style={{ display: "flex", gap: 12, marginTop: 6 }}>
-                    <button
-                        onClick={() => router.back()}
-                        style={{ padding: "10px 14px", borderRadius: 999, border: "1px solid #ddd", background: "#fff" }}
-                    >
-                        戻る
-                    </button>
-                    <button
-                        disabled={submitting}
-                        onClick={onSubmit}
-                        style={{
-                            padding: "10px 14px",
-                            borderRadius: 999,
-                            border: "1px solid #111",
-                            background: submitting ? "#bbb" : "#111",
-                            color: "#fff",
-                            cursor: submitting ? "not-allowed" : "pointer",
-                        }}
-                    >
-                        {submitting ? "作成中..." : "作成する"}
-                    </button>
-                </div>
-
-                {!validation.ok && (
-                    <div style={{ color: "#666", fontSize: 12 }}>
-                        入力チェック: {validation.issues.join(" / ")}
+                        <label style={{ flex: "1 1 260px" }}>
+                            定員（必須）
+                            <input
+                                value={form.capacity}
+                                onChange={(e) => setForm((p) => ({ ...p, capacity: e.target.value }))}
+                                style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, fontSize: 16, lineHeight: "24px" }}
+                                inputMode="numeric"
+                                placeholder="30"
+                            />
+                        </label>
                     </div>
-                )}
+
+                    <label>
+                        場所（必須）
+                        <input
+                            value={form.place}
+                            onChange={(e) => setForm((p) => ({ ...p, place: e.target.value }))}
+                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, fontSize: 16, lineHeight: "24px" }}
+                            placeholder="例：情報科学専門学校 7Fホール"
+                        />
+                    </label>
+
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                        <label style={{ flex: "1 1 260px" }}>
+                            開始日時（必須）
+                            <input
+                                type="datetime-local"
+                                value={form.startAt}
+                                onChange={(e) => setForm((p) => ({ ...p, startAt: e.target.value }))}
+                                style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, fontSize: 16, lineHeight: "24px" }}
+                            />
+                        </label>
+
+                        <label style={{ flex: "1 1 260px" }}>
+                            終了日時（必須）
+                            <input
+                                type="datetime-local"
+                                value={form.endAt}
+                                onChange={(e) => setForm((p) => ({ ...p, endAt: e.target.value }))}
+                                style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, fontSize: 16, lineHeight: "24px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <label>
+                        詳細（任意）
+                        <textarea
+                            value={form.description}
+                            onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, minHeight: 140, fontSize: 16, lineHeight: "24px" }}
+                            placeholder="持ち物、参加条件、タイムテーブルなど"
+                        />
+                    </label>
+
+                    <label>
+                        公開状態
+                        <select
+                            value={form.status}
+                            onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as FormState["status"] }))}
+                            style={{ width: "100%", padding: 10, borderRadius: 12, border: "1px solid #ddd", marginTop: 6, fontSize: 16, lineHeight: "24px" }}
+                        >
+                            <option value="DRAFT">下書き</option>
+                            <option value="PUBLISHED">公開</option>
+                        </select>
+                    </label>
+
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 6 }}>
+                        <button
+                            onClick={() => router.back()}
+                            style={{ padding: "10px 14px", borderRadius: 999, border: "1px solid #ddd", background: "#fff", minWidth: 140, fontSize: 16, flex: "1 1 140px" }}
+                        >
+                            戻る
+                        </button>
+                        <button
+                            disabled={submitting}
+                            onClick={onSubmit}
+                            style={{
+                                padding: "10px 14px",
+                                borderRadius: 999,
+                                border: "1px solid #111",
+                                background: submitting ? "#bbb" : "#111",
+                                color: "#fff",
+                                cursor: submitting ? "not-allowed" : "pointer",
+                                minWidth: 140,
+                                fontSize: 16,
+                                flex: "1 1 140px",
+                            }}
+                        >
+                            {submitting ? "作成中..." : "作成する"}
+                        </button>
+                    </div>
+
+                    {!validation.ok && (
+                        <div style={{ color: "#666", fontSize: 12 }}>
+                            入力チェック: {validation.issues.join(" / ")}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

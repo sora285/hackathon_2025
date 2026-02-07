@@ -16,75 +16,166 @@ type EventItem = {
     createdBy?: string;
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL!;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+
+// noinspection HtmlUnknownTarget
+const NEW_EVENT_HREF = "/planner/events/new";
 
 export default function PlannerEventsPage() {
     const guard = useLiffGuard();
+    const status = guard.status;
+    const userId = "userId" in guard ? guard.userId : undefined;
+    const reason = "reason" in guard ? guard.reason : undefined;
     const [events, setEvents] = useState<EventItem[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (guard.status !== "authed") return;
+        if (status !== "authed") return;
+
+        if (!userId) {
+            setError("ユーザーIDが取得できませんでした");
+            setLoading(false);
+            return;
+        }
+
+        if (!API_BASE) {
+            setError("NEXT_PUBLIC_API_BASE_URL が未設定です");
+            setLoading(false);
+            return;
+        }
 
         (async () => {
             try {
+                setLoading(true);
                 setError(null);
 
-                // 誰でも企画一覧を見せるなら scope=planner とか無しでOK
-                // 自分が作ったものだけ見せたいなら ?createdBy=... を付ける
-                const res = await fetch(`${API_BASE}/events?createdBy=${encodeURIComponent(guard.userId)}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                setEvents(data.items ?? data);
-            } catch (e: unknown){
-                if (e instanceof Error) {
-                    setError(e.message || "取得に失敗しました");
-                } else {
-                    setError("取得に失敗しました");
+                const res = await fetch(
+                    `${API_BASE}/events?createdBy=${encodeURIComponent(userId)}`
+                );
+                if (!res.ok) {
+                    setError("HTTP " + String(res.status));
+                    return;
                 }
+
+                const data = await res.json();
+                setEvents(Array.isArray(data.items) ? data.items : data ?? []);
+            } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : "取得に失敗しました");
+            } finally {
+                setLoading(false);
             }
         })();
-    }, [guard.status]);
+    }, [status, userId]);
 
-    if (guard.status === "loading") return <div style={{ padding: 16 }}>読み込み中...</div>;
-    if (guard.status === "denied") return <div style={{ padding: 16 }}>アクセス不可：{guard.reason}</div>;
+    if (status === "loading") {
+        return <div style={{ padding: 16 }}>読み込み中...</div>;
+    }
+
+    if (status === "denied") {
+        return <div style={{ padding: 16 }}>アクセス不可：{reason}</div>;
+    }
 
     return (
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: 16 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-                <h1 style={{ fontSize: 22, fontWeight: 700 }}>企画イベント一覧</h1>
+        <div style={{ maxWidth: 480, margin: "0 auto", padding: 12 }}>
+            {/* ヘッダー */}
+            <h1 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
+                企画イベント一覧
+            </h1>
 
-                <Link
-                    href="/planner/events/new"
+            <Link
+                href={NEW_EVENT_HREF}
+                style={{
+                    display: "block",
+                    textAlign: "center",
+                    marginBottom: 16,
+                    padding: "14px",
+                    borderRadius: 12,
+                    background: "#111",
+                    color: "#fff",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                }}
+            >
+                ＋ イベントを作成する
+            </Link>
+
+            {/* ローディング */}
+            {loading && <div>読み込み中...</div>}
+
+            {/* エラー */}
+            {!loading && error && (
+                <div
                     style={{
-                        padding: "10px 14px",
-                        borderRadius: 999,
-                        border: "1px solid #111",
-                        background: "#111",
-                        color: "#fff",
-                        textDecoration: "none",
+                        padding: 12,
+                        borderRadius: 12,
+                        border: "1px solid #fca5a5",
+                        color: "#b91c1c",
                     }}
                 >
-                    ＋ イベント作成
-                </Link>
-            </div>
+                    エラー：{error}
+                </div>
+            )}
 
-            {error && <div style={{ marginTop: 12 }}>エラー：{error}</div>}
+            {/* 0件 */}
+            {!loading && !error && events.length === 0 && (
+                <div
+                    style={{
+                        textAlign: "center",
+                        color: "#666",
+                        marginTop: 24,
+                    }}
+                >
+                    <p style={{ marginBottom: 8 }}>まだ企画イベントがありません</p>
+                    <p style={{ fontSize: 12 }}>下のボタンから作成できます</p>
+                </div>
+            )}
 
-            <div style={{ marginTop: 12, display: "grid", gap: 10 }}>
-                {events.map((e) => (
-                    <div key={e.eventId} style={{ padding: 12, border: "1px solid #ddd", borderRadius: 14 }}>
-                        <div style={{ fontWeight: 700 }}>{e.title}</div>
-                        <div style={{ fontSize: 12, color: "#666" }}>{e.area} / {e.place}</div>
-                        <div style={{ fontSize: 12, color: "#666" }}>
-                            {new Date(e.startAt).toLocaleString("ja-JP")} 〜 {new Date(e.endAt).toLocaleString("ja-JP")}
+            {/* 一覧 */}
+            {!loading && !error && events.length > 0 && (
+                <div style={{ display: "grid", gap: 12 }}>
+                    {events.map((e) => (
+                        <div
+                            key={e.eventId}
+                            style={{
+                                padding: 14,
+                                borderRadius: 14,
+                                border: "1px solid #ddd",
+                                background: "#fff",
+                            }}
+                        >
+                            <div style={{ fontWeight: 700, fontSize: 16 }}>
+                                {e.title}
+                            </div>
+
+                            <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
+                                {e.area} / {e.place}
+                            </div>
+
+                            <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
+                                {new Date(e.startAt).toLocaleString("ja-JP")} 〜
+                                <br />
+                                {new Date(e.endAt).toLocaleString("ja-JP")}
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginTop: 8,
+                                    fontSize: 12,
+                                    color: "#666",
+                                }}
+                            >
+                                <span>定員 {e.capacity}</span>
+                                <span>
+                  {e.status === "DRAFT" ? "下書き" : "公開"}
+                </span>
+                            </div>
                         </div>
-                        <div style={{ fontSize: 12, color: "#666" }}>
-                            定員 {e.capacity} / {e.status === "DRAFT" ? "下書き" : "公開"}
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
