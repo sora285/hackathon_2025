@@ -62,7 +62,7 @@ export default function NewEventPage() {
                     return;
                 }
 
-                const decoded = liff.getDecodedIDToken();
+                const decoded = liff.getDecodedIDToken() as { sub?: string } | null;
                 if (!decoded?.sub) {
                     setError("ユーザーIDが取得できませんでした。");
                     return;
@@ -144,7 +144,8 @@ export default function NewEventPage() {
 
             if (!res.ok) {
                 const text = await res.text();
-                throw new Error(text || `HTTP ${res.status}`);
+                setError(text || ("HTTP " + String(res.status)));
+                return;
             }
 
             setOk("イベントを作成しました。");
