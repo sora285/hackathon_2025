@@ -1,5 +1,5 @@
 // lib/api.ts
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 export async function fetchEvents(area: string) {
     if (!API_BASE) throw new Error("NEXT_PUBLIC_API_BASE is not set");
