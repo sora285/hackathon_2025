@@ -21,3 +21,22 @@ export async function postReservation(eventId: string, userId: string) {
     if (res.status === 409) return { ok: false, code: 409 as const };
     return { ok: false, code: res.status as number, text: await res.text() };
 }
+
+// lib/api.ts に追加（例）
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+
+export async function fetchEvent(eventId: string) {
+    const res = await fetch(`${API_BASE}/events/${encodeURIComponent(eventId)}`, {
+        method: "GET",
+        headers: { "content-type": "application/json" },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return (await res.json()) as {
+        eventId: string;
+        title: string;
+        area: string;
+        place: string;
+        startAt: string;
+        endAt: string;
+    };
+}

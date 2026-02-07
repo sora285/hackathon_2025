@@ -6,7 +6,7 @@ import type { CSSProperties } from "react";
 import { useParams, useRouter } from "next/navigation";
 import liff from "@line/liff";
 import { initLiff, getUserId } from "@/lib/liff";
-import { postReservation } from "@/lib/api";
+import { postReservation, fetchEvent } from "@/lib/api";
 
 const styles: Record<string, CSSProperties> = {
   page: {
@@ -90,6 +90,30 @@ function getErrorMessage(e: unknown) {
   return String(e);
 }
 
+async function sendReservationToTalk(eventDetail: {
+    title: string;
+    area: string;
+    place: string;
+    startAt: string;
+    endAt: string;
+}) {
+    // LINEアプリ内以外だと送れないことがある
+    if (!liff.isInClient()) return { ok: false, reason: "not_in_line_client" };
+
+    const text =
+        `✅ 予約完了！
+
+📌 ${eventDetail.title}
+📍 ${eventDetail.area} / ${eventDetail.place}
+🕒 ${new Date(eventDetail.startAt).toLocaleString("ja-JP")} 〜
+    ${new Date(eventDetail.endAt).toLocaleString("ja-JP")}
+
+当日は気をつけて来てね！`;
+
+    await liff.sendMessages([{ type: "text", text }]);
+    return { ok: true };
+}
+
 export default function ReservePage() {
     const params = useParams<{ eventId: string }>();
     const router = useRouter();
@@ -106,11 +130,34 @@ export default function ReservePage() {
                 }
 
                 const userId = await getUserId();
+
+                // 予約
                 const res = await postReservation(eventId, userId);
 
-                if (res.ok) setMsg("✅ 予約完了！");
-                else if (res.code === 409) setMsg("⚠️ 満員 / すでに予約済み / クローズ");
-                else setMsg(`❌ 予約失敗: ${res.code} ${res.text ?? ""}`);
+                if (res.ok) {
+                    setMsg("✅ 予約完了！");
+
+                    // ★ここから追加：イベント詳細を取ってトークに送る
+                    try {
+                        const ev = await fetchEvent(eventId);
+                        const r = await sendReservationToTalk(ev);
+
+                        // 送信できなかった場合でも予約は成功なのでメッセージだけ変える
+                        if (!r.ok) {
+                            setMsg("✅ 予約完了！（※トーク送信はLINEアプリ内で開いた時のみ）");
+                        }
+                    } catch (e) {
+                        // ここで失敗しても予約は成功。黙ってOK（ログだけ）
+                        console.warn("sendMessages failed:", e);
+                        setMsg("✅ 予約完了！（※トーク送信に失敗しました）");
+                    }
+
+                } else if (res.code === 409) {
+                    setMsg("⚠️ 満員かすでに予約済みかクローズしています。");
+                } else {
+                    setMsg(`❌ 予約失敗: ${res.code} ${res.text ?? ""}`);
+                }
+
             } catch (e: unknown) {
                 console.error(e);
                 setMsg("❌ エラー: " + getErrorMessage(e));
