@@ -8,7 +8,7 @@ type GuardState =
     | { status: "authed"; userId: string; idToken?: string }
     | { status: "denied"; reason: string };
 
-const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID!;
+const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID_PLANNER!;
 
 export function useLiffGuard() {
     const [state, setState] = useState<GuardState>({ status: "loading" });

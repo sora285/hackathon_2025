@@ -17,7 +17,7 @@ type FormState = {
 
 const DEFAULT_AREA = process.env.NEXT_PUBLIC_DEFAULT_AREA ?? "横浜市";
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID ?? "";
+const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID_PLANNER ?? "";
 
 function toIsoFromDatetimeLocal(v: string) {
     const d = new Date(v);
@@ -52,7 +52,7 @@ export default function NewEventPage() {
         (async () => {
             try {
                 if (!LIFF_ID) {
-                    setError("NEXT_PUBLIC_LIFF_ID が未設定です。");
+                    setError("NEXT_PUBLIC_LIFF_ID_PLANNER が未設定です。");
                     return;
                 }
                 await liff.init({ liffId: LIFF_ID });
